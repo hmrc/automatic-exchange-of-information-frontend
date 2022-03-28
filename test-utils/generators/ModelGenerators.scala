@@ -20,4 +20,9 @@ import models._
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
-trait ModelGenerators {}
+trait ModelGenerators {
+
+  implicit val arbitraryService: Arbitrary[Service] = Arbitrary {
+    Gen.oneOf[Service](MDR, DAC6)
+  }
+}

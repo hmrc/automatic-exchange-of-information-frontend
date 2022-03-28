@@ -14,18 +14,21 @@
  * limitations under the License.
  *@
 
+@import models.Service
+
 @this(
     layout: templates.Layout,
     govukButton: GovukButton
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(service: Service)(implicit request: Request[_], messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("signedOut.title")),
     showBackLink = false,
     timeout      = false,
-    showSignOut  = false
+    showSignOut  = false,
+    service = service
 ) {
 
     <h1 class="govuk-heading-xl">@messages("signedOut.heading")</h1>
@@ -35,7 +38,7 @@
     <p class="govuk-body">
         @govukButton(
             ButtonViewModel(messages("site.signIn"))
-                .asLink(routes.IndexController.onPageLoad.url)
+                .asLink(routes.IndexController.onPageLoad(service).url)
         )
     </p>
 }

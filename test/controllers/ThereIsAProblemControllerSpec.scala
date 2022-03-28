@@ -14,31 +14,34 @@
  * limitations under the License.
  */
 
-package controllers.auth
+package controllers
 
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.auth.SignedOutView
+import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl
+import views.html.ThereIsAProblemView
 
-class SignedOutControllerSpec extends SpecBase {
+class ThereIsAProblemControllerSpec extends SpecBase {
 
-  "SignedOut Controller" - {
+  "ThereIsAProblemController" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK view" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.SignedOutController.onPageLoad(service).url)
+        val continueUrl = RedirectUrl("/foo")
+        val request     = FakeRequest(GET, routes.ThereIsAProblemController.onPageLoad(service).url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[SignedOutView]
+        val continueView = application.injector.instanceOf[ThereIsAProblemView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(service)(request, messages(application)).toString
+        contentAsString(result) mustEqual continueView(service)(request, messages(application)).toString
       }
     }
+
   }
 }

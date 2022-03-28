@@ -14,14 +14,16 @@
  * limitations under the License.
  *@
 
+@import models.Service
+
 @this(
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList
 )
 
-@(list: SummaryList)(implicit request: Request[_], messages: Messages)
+@(list: SummaryList, service: Service)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title")), service = service) {
 
     <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 

@@ -14,13 +14,15 @@
  * limitations under the License.
  *@
 
+@import models.Service
+
 @this(
     layout: templates.Layout
 )
 
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages)
+@(pageTitle: String, heading: String, message: String, service: Service)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(pageTitle)) {
+@layout(pageTitle = titleNoForm(pageTitle), service =  service) {
     <h1 class="govuk-heading-xl">@messages(heading)</h1>
 
     <p class="govuk-body">@messages(message)</p>

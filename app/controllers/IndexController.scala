@@ -17,6 +17,8 @@
 package controllers
 
 import controllers.actions.IdentifierAction
+import models.Service
+
 import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,8 +32,8 @@ class IndexController @Inject() (
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify {
+  def onPageLoad(service: Service): Action[AnyContent] = identify(service) {
     implicit request =>
-      Ok(view())
+      Ok(view(service))
   }
 }

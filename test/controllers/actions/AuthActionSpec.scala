@@ -20,7 +20,7 @@ import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.routes
-import play.api.mvc.{BodyParsers, Results}
+import play.api.mvc.{Action, AnyContent, BodyParsers, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core._
@@ -35,7 +35,7 @@ class AuthActionSpec extends SpecBase {
 
   class Harness(authAction: IdentifierAction) {
 
-    def onPageLoad() = authAction {
+    def onPageLoad(): Action[AnyContent] = authAction(service) {
       _ => Results.Ok
     }
   }
@@ -97,7 +97,7 @@ class AuthActionSpec extends SpecBase {
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad.url
+          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad(service).url
         }
       }
     }
@@ -117,7 +117,7 @@ class AuthActionSpec extends SpecBase {
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad.url
+          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad(service).url
         }
       }
     }
@@ -137,7 +137,7 @@ class AuthActionSpec extends SpecBase {
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad.url
+          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad(service).url
         }
       }
     }
@@ -157,7 +157,7 @@ class AuthActionSpec extends SpecBase {
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
+          redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad(service).url)
         }
       }
     }
@@ -177,7 +177,7 @@ class AuthActionSpec extends SpecBase {
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
+          redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad(service).url)
         }
       }
     }

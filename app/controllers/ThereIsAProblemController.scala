@@ -17,42 +17,27 @@
 package controllers
 
 import controllers.actions.IdentifierAction
+import models.Service
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl._
-import uk.gov.hmrc.play.bootstrap.binders._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.{JourneyRecoveryContinueView, JourneyRecoveryStartAgainView}
+import views.html.ThereIsAProblemView
 
 import javax.inject.Inject
+import scala.concurrent.Future
 
-class JourneyRecoveryController @Inject() (
+class ThereIsAProblemController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify: IdentifierAction,
-  continueView: JourneyRecoveryContinueView,
-  startAgainView: JourneyRecoveryStartAgainView
+  view: ThereIsAProblemView
 ) extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad(continueUrl: Option[RedirectUrl] = None): Action[AnyContent] = identify {
+  def onPageLoad(service: Service): Action[AnyContent] = identify(service).async {
     implicit request =>
-      val safeUrl: Option[String] = continueUrl.flatMap {
-        unsafeUrl =>
-          unsafeUrl.getEither(OnlyRelative) match {
-            case Right(safeUrl) =>
-              Some(safeUrl.url)
-            case Left(message) =>
-              logger.info(message)
-              None
-          }
-      }
-
-      safeUrl
-        .map(
-          url => Ok(continueView(url))
-        )
-        .getOrElse(Ok(startAgainView()))
+      Future.successful(Ok(view(service)))
   }
+
 }

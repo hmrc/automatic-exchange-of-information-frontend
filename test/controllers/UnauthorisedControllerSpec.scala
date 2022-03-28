@@ -30,14 +30,14 @@ class UnauthorisedControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.UnauthorisedController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.UnauthorisedController.onPageLoad(service).url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[UnauthorisedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
+        contentAsString(result) mustEqual view(service)(request, messages(application)).toString
       }
     }
   }

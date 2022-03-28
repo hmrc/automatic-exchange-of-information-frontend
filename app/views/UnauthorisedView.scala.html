@@ -18,11 +18,12 @@
     layout: templates.Layout
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(service: Service)(implicit request: Request[_], messages: Messages)
 
 @layout(
     pageTitle = titleNoForm(messages("unauthorised.title")),
-    timeout   = false
+    timeout   = false,
+    service = service
 ) {
 
     <h1 class="govuk-heading-xl">@messages("unauthorised.heading")</h1>

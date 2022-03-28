@@ -18,6 +18,8 @@ package controllers
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.Service
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -32,14 +34,16 @@ class CheckYourAnswersController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view: CheckYourAnswersView
 ) extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(service: Service): Action[AnyContent] = (identify(service) andThen getData andThen requireData(service)) {
     implicit request =>
       val list = SummaryListViewModel(
         rows = Seq.empty
       )
 
-      Ok(view(list))
+      Ok(view(list, service))
   }
+
 }
