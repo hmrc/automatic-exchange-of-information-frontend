@@ -35,7 +35,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
-  val service: Service                     = MDR
+  val serviceMDR: Service                  = MDR
 
   protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()

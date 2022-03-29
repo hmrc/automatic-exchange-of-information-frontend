@@ -19,7 +19,6 @@ package controllers
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl
 import views.html.ThereIsAProblemView
 
 class ThereIsAProblemControllerSpec extends SpecBase {
@@ -31,17 +30,15 @@ class ThereIsAProblemControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val continueUrl = RedirectUrl("/foo")
-        val request     = FakeRequest(GET, routes.ThereIsAProblemController.onPageLoad(service).url)
+        val request = FakeRequest(GET, routes.ThereIsAProblemController.onPageLoad(serviceMDR).url)
 
         val result = route(application, request).value
 
         val continueView = application.injector.instanceOf[ThereIsAProblemView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual continueView(service)(request, messages(application)).toString
+        contentAsString(result) mustEqual continueView(serviceMDR)(request, messages(application)).toString
       }
     }
-
   }
 }

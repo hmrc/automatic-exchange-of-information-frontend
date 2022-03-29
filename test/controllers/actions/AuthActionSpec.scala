@@ -20,6 +20,11 @@ import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.routes
+import models.{DAC6, MDR, Service}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, when}
+import org.mockito.MockitoSugar.mock
+import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.{Action, AnyContent, BodyParsers, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -31,14 +36,76 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionSpec extends SpecBase {
+class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
-  class Harness(authAction: IdentifierAction) {
+  override def beforeEach(): Unit = {
+    reset(mockAuthConnector)
+    super.beforeEach()
+  }
+
+  class Harness(authAction: IdentifierAction, service: Service) {
 
     def onPageLoad(): Action[AnyContent] = authAction(service) {
       _ => Results.Ok
     }
   }
+
+  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+
+  val mdrEnrolments: Enrolments = Enrolments(
+    Set(
+      Enrolment(
+        key = "HMRC-MDR-ORG",
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            "MDRID",
+            "123"
+          )
+        ),
+        state = "Activated"
+      )
+    )
+  )
+
+  val mdrNotActiveEnrolments: Enrolments = Enrolments(
+    Set(
+      Enrolment(
+        key = "HMRC-MDR-ORG",
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            "MDRID",
+            "123"
+          )
+        ),
+        state = "NotYetActivated"
+      )
+    )
+  )
+
+  val mdrNoSubscriptionIDEnrolments: Enrolments = Enrolments(
+    Set(
+      Enrolment(
+        key = "HMRC-MDR-ORG",
+        identifiers = Seq.empty,
+        state = "Activated"
+      )
+    )
+  )
+
+  val dac6Enrolments: Enrolments = Enrolments(
+    Set(
+      Enrolment(
+        key = "HMRC-DAC6-ORG",
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            "DAC6ID",
+            "123"
+          )
+        ),
+        state = "Activated"
+      )
+    )
+  )
 
   "Auth Action" - {
 
@@ -53,7 +120,7 @@ class AuthActionSpec extends SpecBase {
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
           val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), appConfig, bodyParsers)
-          val controller = new Harness(authAction)
+          val controller = new Harness(authAction, serviceMDR)
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
@@ -73,7 +140,7 @@ class AuthActionSpec extends SpecBase {
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
           val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), appConfig, bodyParsers)
-          val controller = new Harness(authAction)
+          val controller = new Harness(authAction, serviceMDR)
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
@@ -93,11 +160,11 @@ class AuthActionSpec extends SpecBase {
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
           val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientEnrolments), appConfig, bodyParsers)
-          val controller = new Harness(authAction)
+          val controller = new Harness(authAction, serviceMDR)
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad(service).url
+          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad(serviceMDR).url
         }
       }
     }
@@ -113,11 +180,11 @@ class AuthActionSpec extends SpecBase {
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
           val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientConfidenceLevel), appConfig, bodyParsers)
-          val controller = new Harness(authAction)
+          val controller = new Harness(authAction, serviceMDR)
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad(service).url
+          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad(serviceMDR).url
         }
       }
     }
@@ -133,11 +200,11 @@ class AuthActionSpec extends SpecBase {
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
           val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAuthProvider), appConfig, bodyParsers)
-          val controller = new Harness(authAction)
+          val controller = new Harness(authAction, serviceMDR)
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad(service).url
+          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad(serviceMDR).url
         }
       }
     }
@@ -153,11 +220,11 @@ class AuthActionSpec extends SpecBase {
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
           val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAffinityGroup), appConfig, bodyParsers)
-          val controller = new Harness(authAction)
+          val controller = new Harness(authAction, serviceMDR)
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad(service).url)
+          redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad(serviceMDR).url)
         }
       }
     }
@@ -173,14 +240,147 @@ class AuthActionSpec extends SpecBase {
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
           val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedCredentialRole), appConfig, bodyParsers)
-          val controller = new Harness(authAction)
+          val controller = new Harness(authAction, serviceMDR)
           val result     = controller.onPageLoad()(FakeRequest())
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad(service).url)
+          redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad(serviceMDR).url)
         }
       }
     }
+
+    "must redirect to fileUpload frontend when user has MDR enrolments" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
+          .thenReturn(Future.successful(mdrEnrolments))
+
+        val bodyParsers       = application.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers)
+
+        val controller = new Harness(authAction, serviceMDR)
+        val result     = controller.onPageLoad()(FakeRequest())
+
+        status(result) mustBe SEE_OTHER
+
+        redirectLocation(result) mustBe Some(frontendAppConfig.fileUploadUrl(MDR.toString))
+      }
+    }
+
+    "must redirect to registration frontend when user has no MDR subscriptionId" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
+          .thenReturn(Future.successful(mdrNoSubscriptionIDEnrolments))
+
+        val bodyParsers       = application.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers)
+
+        val controller = new Harness(authAction, serviceMDR)
+        val result     = controller.onPageLoad()(FakeRequest())
+
+        status(result) mustBe SEE_OTHER
+
+        redirectLocation(result) mustBe Some(frontendAppConfig.registrationUrl(MDR.toString))
+      }
+    }
+
+    "must redirect to registration frontend when user has no active MDR enrolment" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
+          .thenReturn(Future.successful(mdrNotActiveEnrolments))
+
+        val bodyParsers       = application.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers)
+
+        val controller = new Harness(authAction, serviceMDR)
+        val result     = controller.onPageLoad()(FakeRequest())
+
+        status(result) mustBe SEE_OTHER
+
+        redirectLocation(result) mustBe Some(frontendAppConfig.registrationUrl(MDR.toString))
+      }
+    }
+
+    "must redirect to registration frontend when user is not enrolled to MDR" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
+          .thenReturn(Future.successful(Enrolments(Set.empty)))
+
+        val bodyParsers       = application.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers)
+
+        val controller = new Harness(authAction, serviceMDR)
+        val result     = controller.onPageLoad()(FakeRequest())
+
+        status(result) mustBe SEE_OTHER
+
+        redirectLocation(result) mustBe Some(frontendAppConfig.registrationUrl(MDR.toString))
+      }
+    }
+
+    "must redirect to fileUpload frontend when user has DAC6 enrolments" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
+          .thenReturn(Future.successful(dac6Enrolments))
+
+        val bodyParsers       = application.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers)
+
+        val controller = new Harness(authAction, DAC6)
+        val result     = controller.onPageLoad()(FakeRequest())
+
+        status(result) mustBe SEE_OTHER
+
+        redirectLocation(result) mustBe Some(frontendAppConfig.fileUploadUrl(DAC6.toString))
+      }
+    }
+
+    "must redirect to registration frontend when user is not enrolled to DAC6" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
+          .thenReturn(Future.successful(Enrolments(Set.empty)))
+
+        val bodyParsers       = application.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+        val authAction = new AuthenticatedIdentifierAction(mockAuthConnector, frontendAppConfig, bodyParsers)
+
+        val controller = new Harness(authAction, DAC6)
+        val result     = controller.onPageLoad()(FakeRequest())
+
+        status(result) mustBe SEE_OTHER
+
+        redirectLocation(result) mustBe Some(frontendAppConfig.registrationUrl(DAC6.toString))
+      }
+    }
+
   }
 }
 

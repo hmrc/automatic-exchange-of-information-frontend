@@ -30,7 +30,7 @@ class IndexControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.IndexController.onPageLoad(service).url)
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad(serviceMDR).url)
 
         val result = route(application, request).value
 
@@ -38,7 +38,7 @@ class IndexControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(service)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(serviceMDR)(request, messages(application)).toString
       }
     }
   }

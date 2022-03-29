@@ -24,9 +24,10 @@ import models.requests.IdentifierRequest
 import play.api.Logging
 import play.api.mvc.Results._
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.http.{HeaderCarrier, UnauthorizedException}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -49,22 +50,29 @@ class AuthenticatedIdentifierAction @Inject() (
 
 class AuthenticatedIdentifierActionWithService @Inject() (
   override val authConnector: AuthConnector,
-  config: FrontendAppConfig,
+  val config: FrontendAppConfig,
   val parser: BodyParsers.Default,
-  service: Service
+  val service: Service
 )(implicit val executionContext: ExecutionContext)
     extends ActionBuilder[IdentifierRequest, AnyContent]
     with AuthorisedFunctions
     with Logging {
 
+  private val enrolmentKey: String    = config.enrolmentKey(service.toString)
+  private val identifier: String      = config.identifier(service.toString)
+  private val registrationURL: String = config.registrationUrl(service.toString)
+  private val fileUploadURL: String   = config.fileUploadUrl(service.toString)
+
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    authorised().retrieve(Retrievals.internalId) {
-      _.map {
-        internalId => block(IdentifierRequest(request, internalId))
-      }.getOrElse(throw new UnauthorizedException("Unable to retrieve internal Id"))
+    authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50).retrieve(Retrievals.authorisedEnrolments) {
+      enrolments =>
+        isEnrolledToService(enrolments) match {
+          case Some(true) => Future.successful(Redirect(fileUploadURL))
+          case _          => Future.successful(Redirect(registrationURL))
+        }
     } recover {
       case _: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
@@ -72,4 +80,10 @@ class AuthenticatedIdentifierActionWithService @Inject() (
         Redirect(routes.UnauthorisedController.onPageLoad(service))
     }
   }
+
+  private def isEnrolledToService[A](enrolments: Enrolments) =
+    for {
+      enrolment <- enrolments.enrolments.filter(_.isActivated).find(_.key.equals(enrolmentKey))
+      enrolled  <- enrolment.getIdentifier(identifier).map(_.value.nonEmpty)
+    } yield enrolled
 }
