@@ -33,7 +33,6 @@ class ErrorHandler @Inject() (
     with I18nSupport {
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html = {
-    rh.path
     view(pageTitle, heading, message, MDR)
   }
 }
