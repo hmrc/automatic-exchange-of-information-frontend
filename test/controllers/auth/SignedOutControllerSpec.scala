@@ -17,11 +17,14 @@
 package controllers.auth
 
 import base.SpecBase
+import config.FrontendAppConfig
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.auth.SignedOutView
 
-class SignedOutControllerSpec extends SpecBase {
+class SignedOutControllerSpec extends SpecBase with GuiceOneAppPerSuite {
+
+  def frontendAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   "SignedOut Controller" - {
 
@@ -34,10 +37,8 @@ class SignedOutControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[SignedOutView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(frontendAppConfig.signOutUrl)
       }
     }
   }
