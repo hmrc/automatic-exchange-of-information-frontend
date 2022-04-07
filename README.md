@@ -20,6 +20,7 @@ Enrolment details for MDR:
 
 ## Run Locally
 
+This service runs on port 10021 and is named MANDATORY_DISCLOSURE_RULES_FRONTEND
 
 Run the following command to start services for MDR locally:
 
@@ -29,12 +30,8 @@ Run the following command to start services for DAC6 locally:
 
     sm --start DAC6_ALL -f
     
-Automatic Exchange of information frontend runs on port 10021
-
 ## Requirements
 
 This service is written in [Scala](http://www.scala-lang.org/) and [Play](http://playframework.com/), and requires a Java 8 [JRE] to run.
 
-
-### License
-This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
+[![Apache-2.0 license](http://img.shields.io/badge/license-Apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
