@@ -20,7 +20,7 @@ Enrolment details for MDR:
 
 ## Run Locally
 
-This service runs on port 10021 and is named MANDATORY_DISCLOSURE_RULES_FRONTEND
+This service runs on port 10021 and is named MANDATORY_DISCLOSURE_RULES_FRONTEND in service manager. 
 
 Run the following command to start services for MDR locally:
 
