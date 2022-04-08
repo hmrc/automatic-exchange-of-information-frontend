@@ -25,11 +25,11 @@ This service runs on port 10021 and is named AUTOMATIC_EXCHANGE_OF_INFORMATION i
 
 Run the following command to start services for MDR locally:
 
-    sm --start MDR_ALL -f
+    sm --start MDR_ALL -r
     
 Run the following command to start services for DAC6 locally:
 
-    sm --start DAC6_ALL -f
+    sm --start DAC6_ALL -r
     
 ## Requirements
 
