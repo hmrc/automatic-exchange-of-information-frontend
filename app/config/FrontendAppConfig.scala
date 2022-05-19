@@ -34,9 +34,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   def feedbackUrl(implicit request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
 
-  val loginUrl: String         = configuration.get[String]("urls.login")
-  val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
-  val signOutUrl: String       = configuration.get[String]("urls.signOut")
+  val loginUrl: String   = configuration.get[String]("urls.login")
+  val signOutUrl: String = configuration.get[String]("urls.signOut")
 
   private val exitSurveyBaseUrl: String = configuration.get[Service]("microservice.services.feedback-frontend").baseUrl
   val exitSurveyUrl: String             = s"$exitSurveyBaseUrl/feedback/automatic-exchange-of-information-frontend"
@@ -46,10 +45,11 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
     "cy" -> Lang("cy")
   )
 
-  val enrolmentKey: String => String    = (serviceName: String) => configuration.get[String](s"enrolment-details.$serviceName.enrolmentKey")
-  val identifier: String => String      = (serviceName: String) => configuration.get[String](s"enrolment-details.$serviceName.identifier")
-  val registrationUrl: String => String = (serviceName: String) => configuration.get[String](s"enrolment-details.$serviceName.registrationUrl")
-  val fileUploadUrl: String => String   = (serviceName: String) => configuration.get[String](s"enrolment-details.$serviceName.fileUploadUrl")
+  val enrolmentKey: String => String     = (serviceName: String) => configuration.get[String](s"enrolment-details.$serviceName.enrolmentKey")
+  val identifier: String => String       = (serviceName: String) => configuration.get[String](s"enrolment-details.$serviceName.identifier")
+  val registrationUrl: String => String  = (serviceName: String) => configuration.get[String](s"enrolment-details.$serviceName.registrationUrl")
+  val fileUploadUrl: String => String    = (serviceName: String) => configuration.get[String](s"enrolment-details.$serviceName.fileUploadUrl")
+  val loginContinueUrl: String => String = (serviceName: String) => configuration.get[String](s"enrolment-details.$serviceName.loginContinue")
 
   val timeout: Int   = configuration.get[Int]("timeout-dialog.timeout")
   val countdown: Int = configuration.get[Int]("timeout-dialog.countdown")
