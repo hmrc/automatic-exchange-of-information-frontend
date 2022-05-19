@@ -58,10 +58,11 @@ class AuthenticatedIdentifierActionWithService @Inject() (
     with AuthorisedFunctions
     with Logging {
 
-  private val enrolmentKey: String    = config.enrolmentKey(service.toString)
-  private val identifier: String      = config.identifier(service.toString)
-  private val registrationURL: String = config.registrationUrl(service.toString)
-  private val fileUploadURL: String   = config.fileUploadUrl(service.toString)
+  private val enrolmentKey: String     = config.enrolmentKey(service.toString)
+  private val identifier: String       = config.identifier(service.toString)
+  private val registrationURL: String  = config.registrationUrl(service.toString)
+  private val fileUploadURL: String    = config.fileUploadUrl(service.toString)
+  private val loginContinueUrl: String = config.loginContinueUrl(service.toString)
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
@@ -75,7 +76,7 @@ class AuthenticatedIdentifierActionWithService @Inject() (
         }
     } recover {
       case _: NoActiveSession =>
-        Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
+        Redirect(config.loginUrl, Map("continue" -> Seq(loginContinueUrl)))
       case _: AuthorisationException =>
         Redirect(routes.UnauthorisedController.onPageLoad)
     }
