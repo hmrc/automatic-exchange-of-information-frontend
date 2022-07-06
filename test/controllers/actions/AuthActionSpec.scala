@@ -377,7 +377,6 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
       }
     }
 
-//    NEW BITS
     "must redirect to fileUpload frontend when user has CBC enrolments" in {
 
       val application = applicationBuilder(userAnswers = None).build()
