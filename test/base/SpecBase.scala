@@ -17,7 +17,7 @@
 package base
 
 import controllers.actions._
-import models.{MDR, Service, UserAnswers}
+import models.{CBC, MDR, Service, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -36,6 +36,7 @@ trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValue
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
   val serviceMDR: Service                  = MDR
+  val serviceCBC: Service                  = CBC
 
   protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()

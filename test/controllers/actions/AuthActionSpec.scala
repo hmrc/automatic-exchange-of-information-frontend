@@ -20,7 +20,7 @@ import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.routes
-import models.{DAC6, MDR, Service}
+import models.{CBC, DAC6, MDR, Service}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.mockito.MockitoSugar.mock
@@ -86,6 +86,46 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
     Set(
       Enrolment(
         key = "HMRC-MDR-ORG",
+        identifiers = Seq.empty,
+        state = "Activated"
+      )
+    )
+  )
+
+  val cbcEnrolments: Enrolments = Enrolments(
+    Set(
+      Enrolment(
+        key = "HMRC-CBC-ORG",
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            "cbcId",
+            "123"
+          )
+        ),
+        state = "Activated"
+      )
+    )
+  )
+
+  val cbcNotActiveEnrolments: Enrolments = Enrolments(
+    Set(
+      Enrolment(
+        key = "HMRC-CBC-ORG",
+        identifiers = Seq(
+          EnrolmentIdentifier(
+            "cbcId",
+            "123"
+          )
+        ),
+        state = "NotYetActivated"
+      )
+    )
+  )
+
+  val cbcNoSubscriptionIDEnrolments: Enrolments = Enrolments(
+    Set(
+      Enrolment(
+        key = "HMRC-CBC-ORG",
         identifiers = Seq.empty,
         state = "Activated"
       )
@@ -334,6 +374,95 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
         status(result) mustBe SEE_OTHER
 
         redirectLocation(result) mustBe Some(frontendAppConfig.registrationUrl(MDR.toString))
+      }
+    }
+
+//    NEW BITS
+    "must redirect to fileUpload frontend when user has CBC enrolments" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
+          .thenReturn(Future.successful(cbcEnrolments))
+
+        val bodyParsers       = application.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+        val authAction = new AuthenticatedIdentifyAndRedirectAction(mockAuthConnector, frontendAppConfig, bodyParsers)
+
+        val controller = new Harness(authAction, serviceCBC)
+        val result     = controller.onPageLoad()(FakeRequest())
+
+        status(result) mustBe SEE_OTHER
+
+        redirectLocation(result) mustBe Some(frontendAppConfig.fileUploadUrl(CBC.toString))
+      }
+    }
+
+    "must redirect to registration frontend when user has no CBC subscriptionId" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
+          .thenReturn(Future.successful(mdrNoSubscriptionIDEnrolments))
+
+        val bodyParsers       = application.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+        val authAction = new AuthenticatedIdentifyAndRedirectAction(mockAuthConnector, frontendAppConfig, bodyParsers)
+
+        val controller = new Harness(authAction, serviceCBC)
+        val result     = controller.onPageLoad()(FakeRequest())
+
+        status(result) mustBe SEE_OTHER
+
+        redirectLocation(result) mustBe Some(frontendAppConfig.registrationUrl(CBC.toString))
+      }
+    }
+
+    "must redirect to registration frontend when user has no active CBC enrolment" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
+          .thenReturn(Future.successful(cbcNotActiveEnrolments))
+
+        val bodyParsers       = application.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+        val authAction = new AuthenticatedIdentifyAndRedirectAction(mockAuthConnector, frontendAppConfig, bodyParsers)
+
+        val controller = new Harness(authAction, serviceCBC)
+        val result     = controller.onPageLoad()(FakeRequest())
+
+        status(result) mustBe SEE_OTHER
+
+        redirectLocation(result) mustBe Some(frontendAppConfig.registrationUrl(CBC.toString))
+      }
+    }
+
+    "must redirect to registration frontend when user is not enrolled to CBC" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
+          .thenReturn(Future.successful(Enrolments(Set.empty)))
+
+        val bodyParsers       = application.injector.instanceOf[BodyParsers.Default]
+        val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+        val authAction = new AuthenticatedIdentifyAndRedirectAction(mockAuthConnector, frontendAppConfig, bodyParsers)
+
+        val controller = new Harness(authAction, serviceCBC)
+        val result     = controller.onPageLoad()(FakeRequest())
+
+        status(result) mustBe SEE_OTHER
+
+        redirectLocation(result) mustBe Some(frontendAppConfig.registrationUrl(CBC.toString))
       }
     }
 
