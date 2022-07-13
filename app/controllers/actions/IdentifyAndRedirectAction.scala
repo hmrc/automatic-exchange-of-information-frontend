@@ -68,7 +68,7 @@ class AuthenticatedIdentifierActionWithService @Inject() (
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50).retrieve(Retrievals.authorisedEnrolments) {
+    authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50).retrieve(Retrievals.allEnrolments) {
       enrolments =>
         isEnrolledToService(enrolments) match {
           case Some(true) => Future.successful(Redirect(fileUploadURL))
