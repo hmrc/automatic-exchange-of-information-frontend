@@ -17,7 +17,7 @@
 package base
 
 import controllers.actions._
-import models.{CBC, MDR, Service, UserAnswers}
+import models.{CBC, MDR, Service}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -30,15 +30,11 @@ import play.api.test.FakeRequest
 
 trait SpecBase extends AnyFreeSpec with Matchers with TryValues with OptionValues with ScalaFutures with IntegrationPatience {
 
-  val userAnswersId: String = "id"
-
-  def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
-
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
   val serviceMDR: Service                  = MDR
   val serviceCBC: Service                  = CBC
 
-  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
+  protected def applicationBuilder: GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[IdentifyAndRedirectAction].to[FakeIdentifierAction]
