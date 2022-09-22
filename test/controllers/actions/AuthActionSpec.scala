@@ -153,7 +153,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
       "must redirect the user to log in " in {
 
-        val application = applicationBuilder(userAnswers = None).build()
+        val application = applicationBuilder.build()
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -173,7 +173,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
       "must redirect the user to log in " in {
 
-        val application = applicationBuilder(userAnswers = None).build()
+        val application = applicationBuilder.build()
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -193,7 +193,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
       "must redirect the user to the unauthorised page" in {
 
-        val application = applicationBuilder(userAnswers = None).build()
+        val application = applicationBuilder.build()
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -213,7 +213,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
       "must redirect the user to the unauthorised page" in {
 
-        val application = applicationBuilder(userAnswers = None).build()
+        val application = applicationBuilder.build()
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -233,7 +233,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
       "must redirect the user to the unauthorised page" in {
 
-        val application = applicationBuilder(userAnswers = None).build()
+        val application = applicationBuilder.build()
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -253,7 +253,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
       "must redirect the user to the unauthorised page" in {
 
-        val application = applicationBuilder(userAnswers = None).build()
+        val application = applicationBuilder.build()
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -273,7 +273,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
       "must redirect the user to the unauthorised page" in {
 
-        val application = applicationBuilder(userAnswers = None).build()
+        val application = applicationBuilder.build()
 
         running(application) {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -291,7 +291,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
     "must redirect to fileUpload frontend when user has MDR enrolments" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder.build()
 
       running(application) {
         when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
@@ -313,7 +313,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
     "must redirect to registration frontend when user has no MDR subscriptionId" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder.build()
 
       running(application) {
         when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
@@ -335,7 +335,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
     "must redirect to registration frontend when user has no active MDR enrolment" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder.build()
 
       running(application) {
         when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
@@ -357,7 +357,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
     "must redirect to registration frontend when user is not enrolled to MDR" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder.build()
 
       running(application) {
         when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
@@ -379,7 +379,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
     "must redirect to fileUpload frontend when user has CBC enrolments" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder.build()
 
       running(application) {
         when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
@@ -401,7 +401,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
     "must redirect to registration frontend when user has no CBC subscriptionId" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder.build()
 
       running(application) {
         when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
@@ -423,7 +423,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
     "must redirect to registration frontend when user has no active CBC enrolment" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder.build()
 
       running(application) {
         when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
@@ -445,7 +445,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
     "must redirect to registration frontend when user is not enrolled to CBC" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder.build()
 
       running(application) {
         when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
@@ -467,7 +467,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
     "must redirect to fileUpload frontend when user has DAC6 enrolments" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder.build()
 
       running(application) {
         when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
@@ -489,7 +489,7 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
 
     "must redirect to registration frontend when user is not enrolled to DAC6" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder.build()
 
       running(application) {
         when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
