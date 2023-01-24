@@ -21,17 +21,16 @@ Enrolment details for MDR:
 
 ---
 
-
 ### Dependencies
 
-| Service               | Link |
-|-----------------------|------|
-| Auth                  |https://github.com/hmrc/auth    |
-| Country by country    |https://github.com/hmrc/country-by-country-reporting    |
-| Tax enrolments        |https://github.com/hmrc/tax-enrolments    |
-| Assets frontend       |https://github.com/hmrc/assets-frontend      |
-| User details          |https://github.com/hmrc/user-details      |
-| Identity verification |https://github.com/hmrc/identity-verification      |
+| Service                | Link |
+|------------------------|------|
+| Auth                   |https://github.com/hmrc/auth    |
+| Tax enrolments         |https://github.com/hmrc/tax-enrolments    |
+| Assets frontend        |https://github.com/hmrc/assets-frontend      |
+| User details           |https://github.com/hmrc/user-details      |
+| Identity verification  |https://github.com/hmrc/identity-verification      |
+
 
 ---
 
