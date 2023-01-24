@@ -1,3 +1,4 @@
+
 # Automatic exchange of information frontend
 
 This microservice automatically routes users depending on enrolment credentials to a frontend service whereby they can register for and/or submit cross border arrangements.
@@ -18,6 +19,21 @@ Enrolment details for MDR:
      registrationUrl = "/register-for-cross-border-arrangements"
      fileUploadUrl = "/disclose-cross-border-arrangements/upload"
 
+---
+
+
+### Dependencies
+
+| Service               | Link |
+|-----------------------|------|
+| Auth                  |https://github.com/hmrc/auth    |
+| Country by country    |https://github.com/hmrc/country-by-country-reporting    |
+| Tax enrolments        |https://github.com/hmrc/tax-enrolments    |
+| Assets frontend       |https://github.com/hmrc/assets-frontend      |
+| User details          |https://github.com/hmrc/user-details      |
+| Identity verification |https://github.com/hmrc/identity-verification      |
+
+---
 
 ## Run Locally
 
@@ -30,7 +46,7 @@ Run the following command to start services for MDR locally:
 Run the following command to start services for DAC6 locally:
 
     sm --start DAC6_ALL -r
-    
+
 ## Requirements
 
 This service is written in [Scala](http://www.scala-lang.org/) and [Play](http://playframework.com/), and requires a Java 8 [JRE] to run.
