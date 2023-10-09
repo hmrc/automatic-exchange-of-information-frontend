@@ -12,8 +12,6 @@ lazy val root = (project in file("."))
   .settings(DefaultBuildSettings.scalaSettings: _*)
   .settings(DefaultBuildSettings.defaultSettings(): _*)
   .settings(inConfig(Test)(testSettings): _*)
-  .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(itSettings): _*)
   .settings(majorVersion := 0)
   .settings(ThisBuild / useSuperShell:= false)
   .settings(
@@ -81,19 +79,4 @@ lazy val testSettings: Seq[Def.Setting[_]] = Seq(
     "-Dconfig.resource=test.application.conf"
   ),
   unmanagedSourceDirectories += baseDirectory.value / "test-utils"
-)
-
-lazy val itSettings = Defaults.itSettings ++ Seq(
-  unmanagedSourceDirectories := Seq(
-    baseDirectory.value / "it",
-    baseDirectory.value / "test-utils"
-  ),
-  unmanagedResourceDirectories := Seq(
-    baseDirectory.value / "it" / "resources"
-  ),
-  parallelExecution := false,
-  fork              := true,
-  javaOptions ++= Seq(
-    "-Dconfig.resource=it.application.conf"
-  )
 )
