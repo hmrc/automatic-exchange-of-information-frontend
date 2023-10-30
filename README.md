@@ -17,17 +17,6 @@ Enrolment details for MDR:
       registrationUrl = "/register-for-exchange-of-information/mdr"
       fileUploadUrl = "/report-under-mandatory-disclosure-rules"
 
-DAC6:
-
-    /automatic-exchange-of-information-frontend/dac6
-
-Enrolment details for DAC6: 
-
-     enrolmentKey = "HMRC-DAC6-ORG"  
-     identifier = "DAC6ID"
-     registrationUrl = "/register-for-cross-border-arrangements"
-     fileUploadUrl = "/disclose-cross-border-arrangements/upload"
-
 ---
 
 ### Dependencies
@@ -58,10 +47,7 @@ This service runs on port 10021 and is named AUTOMATIC_EXCHANGE_OF_INFORMATION i
 Run the following command to start services for MDR locally:
 
     sm --start MDR_ALL -r
-    
-Run the following command to start services for DAC6 locally:
 
-    sm --start DAC6_ALL -r
 
 ## Requirements
 

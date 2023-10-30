@@ -20,7 +20,7 @@ import base.SpecBase
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.routes
-import models.{CBC, DAC6, MDR, Service}
+import models.{CBC, MDR, Service}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.mockito.MockitoSugar.mock
@@ -127,21 +127,6 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
       Enrolment(
         key = "HMRC-CBC-ORG",
         identifiers = Seq.empty,
-        state = "Activated"
-      )
-    )
-  )
-
-  val dac6Enrolments: Enrolments = Enrolments(
-    Set(
-      Enrolment(
-        key = "HMRC-DAC6-ORG",
-        identifiers = Seq(
-          EnrolmentIdentifier(
-            "DAC6ID",
-            "123"
-          )
-        ),
         state = "Activated"
       )
     )
@@ -464,51 +449,6 @@ class AuthActionSpec extends SpecBase with BeforeAndAfterEach {
         redirectLocation(result) mustBe Some(frontendAppConfig.registrationUrl(CBC.toString))
       }
     }
-
-    "must redirect to fileUpload frontend when user has DAC6 enrolments" in {
-
-      val application = applicationBuilder.build()
-
-      running(application) {
-        when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
-          .thenReturn(Future.successful(dac6Enrolments))
-
-        val bodyParsers       = application.injector.instanceOf[BodyParsers.Default]
-        val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val authAction = new AuthenticatedIdentifyAndRedirectAction(mockAuthConnector, frontendAppConfig, bodyParsers)
-
-        val controller = new Harness(authAction, DAC6)
-        val result     = controller.onPageLoad()(FakeRequest())
-
-        status(result) mustBe SEE_OTHER
-
-        redirectLocation(result) mustBe Some(frontendAppConfig.fileUploadUrl(DAC6.toString))
-      }
-    }
-
-    "must redirect to registration frontend when user is not enrolled to DAC6" in {
-
-      val application = applicationBuilder.build()
-
-      running(application) {
-        when(mockAuthConnector.authorise[Enrolments](any(), any())(any(), any()))
-          .thenReturn(Future.successful(Enrolments(Set.empty)))
-
-        val bodyParsers       = application.injector.instanceOf[BodyParsers.Default]
-        val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val authAction = new AuthenticatedIdentifyAndRedirectAction(mockAuthConnector, frontendAppConfig, bodyParsers)
-
-        val controller = new Harness(authAction, DAC6)
-        val result     = controller.onPageLoad()(FakeRequest())
-
-        status(result) mustBe SEE_OTHER
-
-        redirectLocation(result) mustBe Some(frontendAppConfig.registrationUrl(DAC6.toString))
-      }
-    }
-
   }
 }
 

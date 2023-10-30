@@ -21,7 +21,6 @@ import play.api.mvc.PathBindable
 sealed trait Service
 
 case object MDR extends WithName("mdr") with Service
-case object DAC6 extends WithName("dac6") with Service
 case object CBC extends WithName("cbc") with Service
 
 object Service {
@@ -30,10 +29,9 @@ object Service {
 
     override def bind(key: String, value: String): Either[String, Service] =
       implicitly[PathBindable[String]].bind(key, value) match {
-        case Right(MDR.toString)  => Right(MDR)
-        case Right(DAC6.toString) => Right(DAC6)
-        case Right(CBC.toString)  => Right(CBC)
-        case _                    => Left("Unknown service")
+        case Right(MDR.toString) => Right(MDR)
+        case Right(CBC.toString) => Right(CBC)
+        case _                   => Left("Unknown service")
       }
 
     override def unbind(key: String, value: Service): String =

@@ -23,7 +23,7 @@ import play.api.mvc.PathBindable
 class ServiceSpec extends SpecBase with EitherValues {
 
   "Service" - {
-    Seq(MDR, DAC6) foreach {
+    Seq(MDR) foreach {
       service =>
         s"must bind from url for service $service" in {
           val pathBindable = implicitly[PathBindable[Service]]
