@@ -15,7 +15,8 @@ lazy val root = (project in file("."))
   .settings(majorVersion := 0)
   .settings(ThisBuild / useSuperShell:= false)
   .settings(
-    scalaVersion                  := "2.13.8",
+    scalaVersion                  := "2.13.13",
+    ThisBuild / majorVersion := 0,
     ThisBuild / scalafmtOnCompile := true,
     name                          := appName,
     RoutesKeys.routesImport ++= Seq(
@@ -55,6 +56,7 @@ lazy val root = (project in file("."))
           ))
     ),
     // prevent removal of unused code which generates warning errors due to use of third-party libs
+    uglifyOps := UglifyOps.singleFile,
     uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
     pipelineStages        := Seq(digest),
     // below line required to force asset pipeline to operate in dev rather than only prod

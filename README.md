@@ -46,11 +46,11 @@ This service runs on port 10021 and is named AUTOMATIC_EXCHANGE_OF_INFORMATION i
 
 Run the following command to start services for MDR locally:
 
-    sm --start MDR_ALL -r
+    sm2 --start MDR_ALL
 
 
 ## Requirements
 
-This service is written in [Scala](http://www.scala-lang.org/) and [Play](http://playframework.com/), and requires a Java 8 [JRE] to run.
+This service is written in [Scala](http://www.scala-lang.org/) and [Play](http://playframework.com/), and requires at least Java 11 [JRE] to run.
 
 [![Apache-2.0 license](http://img.shields.io/badge/license-Apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
