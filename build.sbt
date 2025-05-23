@@ -15,7 +15,7 @@ lazy val root = (project in file("."))
   .settings(majorVersion := 0)
   .settings(ThisBuild / useSuperShell:= false)
   .settings(
-    scalaVersion                  := "2.13.13",
+    scalaVersion                  := "2.13.16",
     ThisBuild / majorVersion := 0,
     ThisBuild / scalafmtOnCompile := true,
     name                          := appName,
